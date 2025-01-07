@@ -1,6 +1,6 @@
 app-id: org.gnome.Brasero
 runtime: org.gnome.Platform
-runtime-version: '46'
+runtime-version: '48'
 sdk: org.gnome.Sdk
 command: brasero
 finish-args:
@@ -62,11 +62,16 @@ modules:
               url-template: https://downloads.sourceforge.net/sourceforge/libcddb/libcddb/$version/libcddb-$version.tar.bz2
           - type: shell
             commands:
-              - cp -fp /usr/share/gnu-config/config.{guess,sub} ./
+              - cp -fp /usr/share/autoconf/build-aux/config.{guess,sub} ./
+          - type: patch
+            path: patch/libcddb-pointer-types.patch
+            strip-components: 0
 
   - name: libburn
-    config-opts:
-      - --disable-static
+    build-options:
+      cflags: -std=gnu17
+      config-opts:
+        - --disable-static
     sources:
       - type: archive
         url: https://files.libburnia-project.org/releases/libburn-1.5.6.tar.gz
@@ -104,6 +109,7 @@ modules:
         buildsystem: cmake-ninja
         config-opts:
           - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         sources:
           - type: archive
             url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
@@ -134,6 +140,8 @@ modules:
         path: patch/cdrtools-use-app-dir.patch
 
   - name: cdrdao
+    build-options:
+      cflags: -std=gnu17
     sources:
       - type: archive
         url: https://github.com/cdrdao/cdrdao/releases/download/rel_1_2_5/cdrdao-1.2.5.tar.bz2
@@ -176,12 +184,8 @@ modules:
       - prefix=/app
     sources:
       - type: archive
-        url: http://fy.chalmers.se/~appro/linux/DVD+RW/tools/dvd+rw-tools-7.1.tar.gz
+        url: https://web.archive.org/web/20241229001828if_/https://fy.chalmers.se/~appro/linux/DVD+RW/tools/dvd+rw-tools-7.1.tar.gz
         sha512: 938f9ec5597158af275c7bf63002696ba362f6f22a219108c6a1df28792f0485046a7af5ce57e41695aaaa0d69543bd66cbbeb4415df5c0e0a902a3f1d278a31
-        x-checker-data:
-          type: anitya
-          project-id: 638
-          url-template: http://fy.chalmers.se/~appro/linux/DVD+RW/tools/dvd+rw-tools-$version.tar.gz
       - type: patch
         paths:
           - patch/dvd+rw-tools-glibc-2.28.patch
@@ -195,7 +199,10 @@ modules:
         url: https://github.com/Distrotech/cdrkit/archive/refs/tags/release_1.1.11.tar.gz
         sha512: 1c27a79662370be8ea83f9f83ce615f029fa25e452981e0ab5d4e42d380dc98612a91ebbafa1de5c6ea870026cacc73e2906dcfd3750a519697679cd6b66ea92
       - type: patch
-        path: patch/genisoimage-extern.patch
+        paths:
+          - patch/cdrkit-1.1.8-werror.patch
+          - patch/cdrkit-include-header.patch
+          - patch/genisoimage-extern.patch
     modules:
       - name: libbzip2
         no-autogen: true
@@ -249,5 +256,6 @@ modules:
       - type: patch
         paths:
           - patch/brasero-appdata.patch
+          - patch/brasero-fix-gcc-14-build-failure.patch
           - patch/brasero-iso-mime.patch
           - patch/brasero-vcdimager-version.patch

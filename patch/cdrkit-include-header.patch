@@ -1,0 +1,12 @@
+diff --git a/genisoimage/genisoimage.c b/genisoimage/genisoimage.c
+index 46f0cb7..d7d38ce 100644
+--- a/genisoimage/genisoimage.c
++++ b/genisoimage/genisoimage.c
+@@ -47,6 +47,7 @@
+ 
+ #include <mconfig.h>
+ #include "genisoimage.h"
++#include "checksum.h"
+ #include <errno.h>
+ #include <timedefs.h>
+ #include <fctldefs.h>

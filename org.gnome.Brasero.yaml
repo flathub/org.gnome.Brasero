@@ -74,8 +74,8 @@ modules:
         - --disable-static
     sources:
       - type: archive
-        url: https://files.libburnia-project.org/releases/libburn-1.5.6.tar.gz
-        sha512: 549cb25310aac5ce445639374d84f0c09fb1fdd70be97479588775e5afcc12dd0655c5bf51bd3f1bf8c06a66b318fd1e709dcfd72845e795ffaf353ea621accd
+        url: https://files.libburnia-project.org/releases/libburn-1.5.8.tar.gz
+        sha512: fa290de9c9e5270eea7752418caaf6d8ac9b9291e71ea043637f78493d91bf1daa3ec23f3c4e7b584d0134b123f3ca279c02cbb44ad3027e7e7d439966512280
         x-checker-data:
           type: anitya
           project-id: 1568
@@ -86,8 +86,8 @@ modules:
       - --disable-static
     sources:
       - type: archive
-        url: https://files.libburnia-project.org/releases/libisofs-1.5.6.pl01.tar.gz
-        sha512: 7760931abbe508002bd3e7eeb694071425f24316cb11c80a2f162a76c3a1d79c57593b758bc0e540107140fd18714e1bf87ae3a65510956a76a1c09f80453a80
+        url: https://files.libburnia-project.org/releases/libisofs-1.5.8.tar.gz
+        sha512: c36a81c47516f6374e65863e8e4374ece3a14cf0cfc15ab381338c5df122835d66494b139223217278434baca07dae0a4bc8c1e8c00dae131ded1c5672808cc7
         x-checker-data:
           type: anitya
           project-id: 1646

@@ -1,6 +1,6 @@
 app-id: org.gnome.Brasero
 runtime: org.gnome.Platform
-runtime-version: '48'
+runtime-version: '49'
 sdk: org.gnome.Sdk
 command: brasero
 finish-args:
@@ -31,6 +31,17 @@ rename-appdata-file: brasero.appdata.xml
 rename-icon: brasero
 copy-icon: true
 modules:
+  # dvdauthor needs meson >=1.10.0
+  - name: meson
+    sources:
+      - type: archive
+        url: https://github.com/mesonbuild/meson/releases/download/1.10.2/meson-1.10.2.tar.gz
+        sha512: 43d408fde7390c81eaef63b835deb4acfcae279cf05bcd63a368c4bc1de69b7fb620f801a7700345d4c41e155a4429a43cdef12e60322aa20a33edfaeb5ce7e9
+    buildsystem: simple
+    build-commands:
+      - pip install --prefix=/app --ignore-installed --no-build-isolation .
+    cleanup: ['*']
+
   - shared-modules/libcanberra/libcanberra.json
   - shared-modules/intltool/intltool-0.51.json
 
@@ -42,12 +53,12 @@ modules:
       - --disable-cpp-progs
     sources:
       - type: archive
-        url: https://ftp.gnu.org/gnu/libcdio/libcdio-2.1.0.tar.bz2
-        sha512: c290821da55fd9ae366670a58857aa6efcebc9f25b7caea063cf12f9cbda84fe770c5f59f972227fda50517ca58c5f39c0137daa0f93179e3daa45303d8b610f
+        url: https://github.com/libcdio/libcdio/releases/download/2.3.0/libcdio-2.3.0.tar.bz2
+        sha512: 42e1659df57b558f5bfc81badf137682793070d1301fdf4926d221eca1fffc8d1b912d23ebe0a2e84a9bbd832f257033ef854b5349cf80fc8184bce759800d6c
         x-checker-data:
           type: anitya
           project-id: 1573
-          url-template: https://ftp.gnu.org/gnu/libcdio/libcdio-$version.tar.bz2
+          url-template: https://github.com/libcdio/libcdio/releases/download/$version/libcdio-$version.tar.bz2
     modules:
       - name: libcddb
         config-opts:
@@ -154,27 +165,29 @@ modules:
             | .browser_download_url
 
   - name: dvdauthor
-    config-opts:
-      - --disable-dvdunauthor
     sources:
       - type: archive
-        url: https://github.com/ldo/dvdauthor/archive/fe8fe3578f95f34889e7ed17591d02dceb4f42ed.tar.gz
-        sha512: 9f284bdda8008655c95e27806ee752ab0227e61f331441759d347e6e2e5baa63030b58ba1d6c6ce09511840125b96de83f72b3f59b3ffbbccee56c97b56f73c6
-      - type: patch
-        path: patch/dvdauthor-no-doc.patch
+        url: https://codeberg.org/daniel_foster/dvdauthor/archive/a99e785cb9b73f4d9a477eb39662fa1e1e2c7c52.tar.gz
+        sha512: 65c749b3b8bbccc01754101a2b38f29934e8ddfb251ebba81a81fbd7742325ef1c4b2413ac70064bc52ab0334dd47116a9e711066990899ad6b25abd11f6d5d5
+    config-opts:
+      - -Dbuildtype=release
+      - -Db_lto=true
+    buildsystem: meson
 
   - name: libdvdcss
     config-opts:
-      - --disable-doc
-      - --disable-static
+      - -Dbuildtype=release
+      - -Ddefault_library=shared
+      - -Db_lto=true
+    buildsystem: meson
     sources:
       - type: archive
-        url: https://download.videolan.org/pub/libdvdcss/1.4.3/libdvdcss-1.4.3.tar.bz2
-        sha512: 0f9c0244feff5ca62459823810a39ede745b63fedb682707fcbaf0dff11fff42998cef31a281bb6380930123d079780d37a79871f6e628cdca9cfa06c64befb6
+        url: https://download.videolan.org/pub/libdvdcss/1.5.0/libdvdcss-1.5.0.tar.xz
+        sha512: edd8b00af2621d1b8fb7eac818e9e7a763aabb1b2868d2fc56836b8a22d6d6bc1855b027125557263a6607c86e5d32214b86ab4e22ecb6ca51964abd22574ea0
         x-checker-data:
           type: anitya
           project-id: 5568
-          url-template: https://download.videolan.org/pub/libdvdcss/$version/libdvdcss-$version.tar.bz2
+          url-template: https://download.videolan.org/pub/libdvdcss/$version/libdvdcss-$version.tar.xz
 
   - name: dvd+rw-tools
     no-autogen: true
@@ -199,6 +212,7 @@ modules:
       - type: patch
         paths:
           - patch/cdrkit-1.1.8-werror.patch
+          - patch/cdrkit-cmake-4.patch
           - patch/cdrkit-include-header.patch
           - patch/genisoimage-extern.patch
     modules:
@@ -232,6 +246,8 @@ modules:
           type: anitya
           project-id: 16033
           url-template: https://ftp.gnu.org/gnu/vcdimager/vcdimager-$version.tar.gz
+      - type: patch
+        path: patch/vcdimager-libxml-2.14.patch
     modules:
       - name: popt
         config-opts:

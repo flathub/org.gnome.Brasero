@@ -8,14 +8,14 @@ config-opts:
   - -Dgpl=enabled
 sources:
   - type: archive
-    url: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.24.13.tar.xz
-    sha512: c2a43861c04b89e5ad01f38394f3fa29bdb106eedcf1e066f69e5a6719d7e7bbb7f3b2da1cde68541a3928e68239adbe88573a59c89b5dc3aae621c8c822bd7f
+    url: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.26.11.tar.xz
+    sha512: 6a105d1b9f0d51c7c157b259e408b2f23aa44b74f3c60708c8024d7790e2fb2ee65884ae709a9dbb31a84d6b16447b127bc85153a3fe33082c0cc9a73eb950ef
     x-checker-data:
       type: anitya
       project-id: 21849
       url-template: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-$version.tar.xz
       versions:
-        <: 1.25.0
+        <: 1.27.0
 modules:
   - name: mjpegtools
     config-opts:
@@ -28,3 +28,5 @@ modules:
           type: anitya
           project-id: 14612
           url-template: https://downloads.sourceforge.net/project/mjpeg/mjpegtools/$version/mjpegtools-$version.tar.gz
+      - type: patch
+        path: patch/mjpegtools-gcc-15.patch

@@ -1,6 +1,6 @@
 id: org.gnome.Brasero
 runtime: org.gnome.Platform
-runtime-version: '49'
+runtime-version: '50'
 sdk: org.gnome.Sdk
 command: brasero
 cleanup:

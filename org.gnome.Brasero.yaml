@@ -1,31 +1,31 @@
-app-id: org.gnome.Brasero
+id: org.gnome.Brasero
 runtime: org.gnome.Platform
 runtime-version: '49'
 sdk: org.gnome.Sdk
 command: brasero
+cleanup:
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/aclocal
+  - /share/cmake
+  - /share/doc
+  - /share/gtk-doc
+  - /share/man
+  - /share/pkgconfig
+  - /include
+  - /man
+  - '*.a'
+  - '*.la'
 finish-args:
+  - --share=ipc
   - --socket=wayland
   - --socket=fallback-x11
-  - --share=ipc
   - --socket=pulseaudio
   - --filesystem=home
   - --device=all
-  - --talk-name=org.gtk.vfs.*
   - --filesystem=xdg-run/gvfsd
   - --add-policy=Tracker3.dbus:org.freedesktop.Tracker3.Miner.Files=tracker:Software
-cleanup:
-  - /include
-  - /lib/cmake
-  - /lib/pkgconfig
-  - /share/cmake
-  - /share/pkgconfig
-  - /share/aclocal
-  - /man
-  - /share/man
-  - /share/gtk-doc
-  - /share/doc
-  - '*.la'
-  - '*.a'
+  - --talk-name=org.gtk.vfs.*
 rename-desktop-file: brasero.desktop
 rename-appdata-file: brasero.appdata.xml
 rename-icon: brasero
@@ -47,10 +47,6 @@ modules:
 
   # required by vcdimager, wanted by libburn
   - name: libcdio
-    config-opts:
-      - --disable-static
-      - --disable-example-progs
-      - --disable-cpp-progs
     sources:
       - type: archive
         url: https://github.com/libcdio/libcdio/releases/download/2.3.0/libcdio-2.3.0.tar.bz2
@@ -59,10 +55,12 @@ modules:
           type: anitya
           project-id: 1573
           url-template: https://github.com/libcdio/libcdio/releases/download/$version/libcdio-$version.tar.bz2
+    config-opts:
+      - --disable-static
+      - --disable-example-progs
+      - --disable-cpp-progs
     modules:
       - name: libcddb
-        config-opts:
-          - --disable-static
         sources:
           - type: archive
             url: https://downloads.sourceforge.net/sourceforge/libcddb/libcddb/1.3.2/libcddb-1.3.2.tar.bz2
@@ -77,12 +75,10 @@ modules:
           - type: patch
             path: patch/libcddb-pointer-types.patch
             strip-components: 0
+        config-opts:
+          - --disable-static
 
   - name: libburn
-    build-options:
-      cflags: -std=gnu17
-      config-opts:
-        - --disable-static
     sources:
       - type: archive
         url: https://files.libburnia-project.org/releases/libburn-1.5.8.tar.gz
@@ -91,10 +87,12 @@ modules:
           type: anitya
           project-id: 1568
           url-template: https://files.libburnia-project.org/releases/libburn-$version.tar.gz
-
-  - name: libisofs
     config-opts:
       - --disable-static
+    build-options:
+      cflags: -std=gnu17
+
+  - name: libisofs
     sources:
       - type: archive
         url: https://files.libburnia-project.org/releases/libisofs-1.5.8.pl01.tar.gz
@@ -103,11 +101,10 @@ modules:
           type: anitya
           project-id: 1646
           url-template: https://files.libburnia-project.org/releases/libisofs-$version.tar.gz
+    config-opts:
+      - --disable-static
 
   - name: totem-pl-parser
-    buildsystem: meson
-    config-opts:
-      - -Dbuildtype=debugoptimized
     sources:
       - type: archive
         url: https://download.gnome.org/sources/totem-pl-parser/3.26/totem-pl-parser-3.26.7.tar.xz
@@ -115,12 +112,12 @@ modules:
         x-checker-data:
           type: gnome
           name: totem-pl-parser
+    config-opts:
+      - -Dbuildtype=release
+      - -Db_lto=true
+    buildsystem: meson
     modules:
       - name: uchardet
-        buildsystem: cmake-ninja
-        config-opts:
-          - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-          - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         sources:
           - type: archive
             url: https://www.freedesktop.org/software/uchardet/releases/uchardet-0.0.8.tar.xz
@@ -129,14 +126,14 @@ modules:
               type: anitya
               project-id: 9265
               url-template: https://www.freedesktop.org/software/uchardet/releases/uchardet-$version.tar.xz
+        config-opts:
+          - -DCMAKE_BUILD_TYPE=Release
+          - -DCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=ON
+          - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        buildsystem: cmake-ninja
 
   - name: cdrtools
     disabled: true # permissions are set incorrectly when installed
-    rm-configure: true
-    no-autogen: true
-    build-options:
-      env:
-        - INS_BASE: ${FLATPAK_DEST}
     sources:
       - type: archive
         url: https://codeberg.org/schilytools/schilytools/releases/download/2024-03-21/schily-2024-03-21.tar.bz2
@@ -149,10 +146,13 @@ modules:
             | .browser_download_url
       - type: patch
         path: patch/cdrtools-use-app-dir.patch
+    rm-configure: true
+    no-autogen: true
+    build-options:
+      env:
+        - INS_BASE: ${FLATPAK_DEST}
 
   - name: cdrdao
-    build-options:
-      cflags: -std=gnu17
     sources:
       - type: archive
         url: https://github.com/cdrdao/cdrdao/releases/download/rel_1_2_6/cdrdao-1.2.6.tar.bz2
@@ -163,10 +163,13 @@ modules:
           version-query: .tag_name | sub("^rel_"; "") | gsub("_"; ".")
           url-query: .assets[] | select(.name=="cdrdao-" + $version +  ".tar.bz2")
             | .browser_download_url
+    build-options:
+      cflags: -std=gnu17
 
   - name: dvdauthor
     sources:
       - type: archive
+        # a personal fork with meson, which avoids issues with the autoconf build system.
         url: https://codeberg.org/daniel_foster/dvdauthor/archive/a99e785cb9b73f4d9a477eb39662fa1e1e2c7c52.tar.gz
         sha512: 65c749b3b8bbccc01754101a2b38f29934e8ddfb251ebba81a81fbd7742325ef1c4b2413ac70064bc52ab0334dd47116a9e711066990899ad6b25abd11f6d5d5
     config-opts:
@@ -175,11 +178,6 @@ modules:
     buildsystem: meson
 
   - name: libdvdcss
-    config-opts:
-      - -Dbuildtype=release
-      - -Ddefault_library=shared
-      - -Db_lto=true
-    buildsystem: meson
     sources:
       - type: archive
         url: https://download.videolan.org/pub/libdvdcss/1.5.0/libdvdcss-1.5.0.tar.xz
@@ -188,11 +186,13 @@ modules:
           type: anitya
           project-id: 5568
           url-template: https://download.videolan.org/pub/libdvdcss/$version/libdvdcss-$version.tar.xz
+    config-opts:
+      - -Dbuildtype=release
+      - -Ddefault_library=shared
+      - -Db_lto=true
+    buildsystem: meson
 
   - name: dvd+rw-tools
-    no-autogen: true
-    make-install-args:
-      - prefix=/app
     sources:
       - type: archive
         url: https://web.archive.org/web/20241229001828if_/https://fy.chalmers.se/~appro/linux/DVD+RW/tools/dvd+rw-tools-7.1.tar.gz
@@ -202,9 +202,11 @@ modules:
           - patch/dvd+rw-tools-glibc-2.28.patch
           - patch/dvd+rw-tools-includes.patch
           - patch/dvd+rw-tools-wctomb.patch
+    make-install-args:
+      - prefix=/app
+    no-autogen: true
 
   - name: cdrkit
-    buildsystem: cmake-ninja
     sources:
       - type: archive
         url: https://github.com/Distrotech/cdrkit/archive/refs/tags/release_1.1.11.tar.gz
@@ -215,15 +217,12 @@ modules:
           - patch/cdrkit-cmake-4.patch
           - patch/cdrkit-include-header.patch
           - patch/genisoimage-extern.patch
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=ON
+    buildsystem: cmake-ninja
     modules:
       - name: libbzip2
-        no-autogen: true
-        make-args:
-          - --f=Makefile-libbz2_so
-        no-make-install: true
-        post-install:
-          - install -Dm644 libbz2.so.1.0.8 ${FLATPAK_DEST}/lib/
-          - ln -s ${FLATPAK_DEST}/lib/libbz2.so.1.0.8 ${FLATPAK_DEST}/lib/libbz2.so.1.0
         sources:
           - type: archive
             url: https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
@@ -232,12 +231,49 @@ modules:
               type: anitya
               project-id: 237
               url-template: https://sourceware.org/pub/bzip2/bzip2-$version.tar.gz
+        make-args:
+          - --f=Makefile-libbz2_so
+        no-autogen: true
+        no-make-install: true
+        post-install:
+          - install -Dm644 libbz2.so.1.0.8 ${FLATPAK_DEST}/lib/
+          - ln -s ${FLATPAK_DEST}/lib/libbz2.so.1.0.8 ${FLATPAK_DEST}/lib/libbz2.so.1.0
 
-  - gst-plugins-bad.yaml
+  - name: gst-plugins-bad
+    sources:
+      - type: archive
+        url: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.26.11.tar.xz
+        sha512: 6a105d1b9f0d51c7c157b259e408b2f23aa44b74f3c60708c8024d7790e2fb2ee65884ae709a9dbb31a84d6b16447b127bc85153a3fe33082c0cc9a73eb950ef
+        x-checker-data:
+          type: anitya
+          project-id: 21849
+          url-template: https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-$version.tar.xz
+          versions:
+            <: 1.27.0
+    config-opts:
+      - -Dauto_features=disabled
+      - -Dbuildtype=release
+      - -Db_lto=true
+      - -Dmpeg2enc=enabled
+      - -Dmplex=enabled
+      - -Dgpl=enabled
+    buildsystem: meson
+    modules:
+      - name: mjpegtools
+        sources:
+          - type: archive
+            url: https://downloads.sourceforge.net/project/mjpeg/mjpegtools/2.2.1/mjpegtools-2.2.1.tar.gz
+            sha512: 4d7f4dcf56a0e6079025bf0221ee632d91c4cc635a8c7eb9ddf3f7b86ad7250415c6dc4fd4113081920bc9c8fdc2552b8a3aaf896bf5a778acfacb15c7ded830
+            x-checker-data:
+              type: anitya
+              project-id: 14612
+              url-template: https://downloads.sourceforge.net/project/mjpeg/mjpegtools/$version/mjpegtools-$version.tar.gz
+          - type: patch
+            path: patch/mjpegtools-gcc-15.patch
+        config-opts:
+          - --disable-static
 
   - name: vcdimager
-    config-opts:
-      - --disable-static
     sources:
       - type: archive
         url: https://ftp.gnu.org/gnu/vcdimager/vcdimager-2.0.1.tar.gz
@@ -248,18 +284,18 @@ modules:
           url-template: https://ftp.gnu.org/gnu/vcdimager/vcdimager-$version.tar.gz
       - type: patch
         path: patch/vcdimager-libxml-2.14.patch
+    config-opts:
+      - --disable-static
     modules:
       - name: popt
-        config-opts:
-          - --disable-static
         sources:
           - type: archive
             url: https://ftp.osuosl.org/pub/rpm/popt/releases/popt-1.x/popt-1.19.tar.gz
             sha512: 5d1b6a15337e4cd5991817c1957f97fc4ed98659870017c08f26f754e34add31d639d55ee77ca31f29bb631c0b53368c1893bd96cf76422d257f7997a11f6466
+        config-opts:
+          - --disable-static
 
   - name: brasero
-    config-opts:
-      - --disable-gtk-doc-html
     sources:
       - type: archive
         url: https://download.gnome.org/sources/brasero/3.12/brasero-3.12.3.tar.xz
@@ -273,3 +309,5 @@ modules:
           - patch/brasero-fix-gcc-14-build-failure.patch
           - patch/brasero-iso-mime.patch
           - patch/brasero-vcdimager-version.patch
+    config-opts:
+      - --disable-gtk-doc-html

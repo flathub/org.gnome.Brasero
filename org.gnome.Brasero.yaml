@@ -53,8 +53,8 @@ modules:
       - --disable-cpp-progs
     sources:
       - type: archive
-        url: https://github.com/libcdio/libcdio/releases/download/2.3.0/libcdio-2.3.0.tar.bz2
-        sha512: 42e1659df57b558f5bfc81badf137682793070d1301fdf4926d221eca1fffc8d1b912d23ebe0a2e84a9bbd832f257033ef854b5349cf80fc8184bce759800d6c
+        url: https://github.com/libcdio/libcdio/releases/download/2.4.0/libcdio-2.4.0.tar.bz2
+        sha512: fd7d397298ab8a8c8e8d2aab5e63d2a7da5b6bb39ab1a6176afe994f56967a0e0bd80b1ad3c8479063a6f49fc706269a76f14cee52e42b1ae5570764b4c7a148
         x-checker-data:
           type: anitya
           project-id: 1573
@@ -97,8 +97,8 @@ modules:
       - --disable-static
     sources:
       - type: archive
-        url: https://files.libburnia-project.org/releases/libisofs-1.5.8.pl01.tar.gz
-        sha512: 6dc5acf83db11c7f5ce574224bc8c58914fc749dd7582e6f69c4199225ad786ab23155f3c753b28b145cd51c6bca4dc4db285cb9b8e99f583966a6baa9284f37
+        url: https://files.libburnia-project.org/releases/libisofs-1.5.8.pl02.tar.gz
+        sha512: 0b582bc6e6bfe181be5ccbff8c54ec231a2e6ef5fdc654383b55717fa9a19fe7a3151dd40d0c67bc0455b77b9def260887f1ce7bb3035426b5e4d3aafa08265c
         x-checker-data:
           type: anitya
           project-id: 1646
@@ -182,8 +182,8 @@ modules:
     buildsystem: meson
     sources:
       - type: archive
-        url: https://download.videolan.org/pub/libdvdcss/1.5.0/libdvdcss-1.5.0.tar.xz
-        sha512: edd8b00af2621d1b8fb7eac818e9e7a763aabb1b2868d2fc56836b8a22d6d6bc1855b027125557263a6607c86e5d32214b86ab4e22ecb6ca51964abd22574ea0
+        url: https://download.videolan.org/pub/libdvdcss/1.6.0/libdvdcss-1.6.0.tar.xz
+        sha512: 2576b7bf212ecf26b4ab3cef943df2a4a2e23478c977f305e3da2d1b11541b5192c29fd8f62bf2222db7d11825e88eb836821bc2bb344a0c08fa24593d19c740
         x-checker-data:
           type: anitya
           project-id: 5568

@@ -1,6 +1,6 @@
 app-id: org.gnome.Brasero
 runtime: org.gnome.Platform
-runtime-version: '49'
+runtime-version: '50'
 sdk: org.gnome.Sdk
 command: brasero
 finish-args:
@@ -27,7 +27,6 @@ cleanup:
   - '*.la'
   - '*.a'
 rename-desktop-file: brasero.desktop
-rename-appdata-file: brasero.appdata.xml
 rename-icon: brasero
 copy-icon: true
 modules:
@@ -43,7 +42,6 @@ modules:
     cleanup: ['*']
 
   - shared-modules/libcanberra/libcanberra.json
-  - shared-modules/intltool/intltool-0.51.json
 
   # required by vcdimager, wanted by libburn
   - name: libcdio
@@ -168,7 +166,7 @@ modules:
     sources:
       - type: archive
         url: https://codeberg.org/daniel_foster/dvdauthor/archive/a99e785cb9b73f4d9a477eb39662fa1e1e2c7c52.tar.gz
-        sha512: 65c749b3b8bbccc01754101a2b38f29934e8ddfb251ebba81a81fbd7742325ef1c4b2413ac70064bc52ab0334dd47116a9e711066990899ad6b25abd11f6d5d5
+        sha512: 8e020b39dab816c1f763493f253ee7198ae0fd49c625a517e5cfb9c5d63a60a1dd970c860106aef450ec6ee145ba20cd0674752bde85cab658bc8eb97ac4749c
     config-opts:
       - -Dbuildtype=release
       - -Db_lto=true
@@ -258,18 +256,11 @@ modules:
             sha512: 5d1b6a15337e4cd5991817c1957f97fc4ed98659870017c08f26f754e34add31d639d55ee77ca31f29bb631c0b53368c1893bd96cf76422d257f7997a11f6466
 
   - name: brasero
+    buildsystem: meson
     config-opts:
-      - --disable-gtk-doc-html
+      - -Dbuildtype=release
+      - -Db_lto=true
     sources:
-      - type: archive
-        url: https://download.gnome.org/sources/brasero/3.12/brasero-3.12.3.tar.xz
-        sha256: 87749eae33a141207d1b00be233b6d8045982ed3249ed4b98dae1f3a975fea15
-        x-checker-data:
-          type: gnome
-          name: brasero
-      - type: patch
-        paths:
-          - patch/brasero-appdata.patch
-          - patch/brasero-fix-gcc-14-build-failure.patch
-          - patch/brasero-iso-mime.patch
-          - patch/brasero-vcdimager-version.patch
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/brasero.git
+        commit: 00340a39e7fede60b04ef6eb31fe12210e6e369f

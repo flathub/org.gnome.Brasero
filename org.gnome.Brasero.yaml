@@ -261,6 +261,9 @@ modules:
       - -Dbuildtype=release
       - -Db_lto=true
     sources:
-      - type: git
-        url: https://gitlab.gnome.org/GNOME/brasero.git
-        commit: 00340a39e7fede60b04ef6eb31fe12210e6e369f
+      - type: archive
+        url: https://download.gnome.org/sources/brasero/3.12/brasero-3.12.4.tar.xz
+        sha256: 3226049ac40969093c5756f9892e76dbda1efeb105cda32f39fd52f6547ed5b3
+        x-checker-data:
+          type: gnome
+          name: brasero
